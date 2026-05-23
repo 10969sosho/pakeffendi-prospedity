@@ -1,0 +1,10 @@
+{
+  "name": "bali-imo",
+  "version": "1.0.0",
+  "description": "BALI ImO Laravel Project",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:list": "playwright test --reporter=list"
+  }
+}
