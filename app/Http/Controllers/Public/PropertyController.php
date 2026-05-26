@@ -27,6 +27,17 @@ class PropertyController extends Controller
                 ->orWhere('expired_date', '>=', now()->toDateString());
         });
 
+        // Property quality filter - only show properties with valid data
+        $query->whereNotNull('title')
+            ->where('title', '!=', '')
+            ->whereNotNull('description')
+            ->where('description', '!=', '')
+            ->where(function ($q) {
+                $q->whereHas('media', function ($mq) {
+                    $mq->where('collection_name', 'photos');
+                });
+            });
+
         // Search filters
         if ($request->filled('property_type')) {
             $type = $request->property_type;
@@ -233,6 +244,17 @@ class PropertyController extends Controller
                 ->orWhere('expired_date', '>=', now()->toDateString());
         });
 
+        // Property quality filter
+        $query->whereNotNull('title')
+            ->where('title', '!=', '')
+            ->whereNotNull('description')
+            ->where('description', '!=', '')
+            ->where(function ($q) {
+                $q->whereHas('media', function ($mq) {
+                    $mq->where('collection_name', 'photos');
+                });
+            });
+
         // Force featured
         $query->where('is_featured', true);
 
@@ -427,6 +449,16 @@ class PropertyController extends Controller
             }
         }
 
+        // Property quality validation - if property has no images or empty title, return 404
+        $photos = $property->getMedia('photos');
+        $hasValidImage = $photos->count() > 0;
+        $hasValidTitle = !empty(trim($property->title));
+        $hasValidDescription = !empty(trim($property->description ?? ''));
+
+        if (!$hasValidImage || !$hasValidTitle || !$hasValidDescription) {
+            abort(404);
+        }
+
         // Increment views counter
         $property->increment('views');
 
@@ -439,17 +471,59 @@ class PropertyController extends Controller
                 $q->whereNull('expired_date')
                     ->orWhere('expired_date', '>=', now()->toDateString());
             })
+            ->whereNotNull('title')
+            ->where('title', '!=', '')
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
+            ->where(function ($q) {
+                $q->whereHas('media', function ($mq) {
+                    $mq->where('collection_name', 'photos');
+                });
+            })
             ->select('id', 'title', 'property_number', 'latitude', 'longitude', 'location_text', 'area', 'price_freehold', 'price_leasehold', 'price_monthly', 'price_yearly')
             ->get();
 
-        return view('public.property.show', compact('property', 'allProperties'));
+        // Related properties (same area or type, excluding current)
+        $relatedProperties = Property::where(function ($q) {
+            $q->where('property_status', 'AVAILABLE')
+                ->orWhereNull('property_status');
+        })
+            ->where(function ($q) {
+                $q->whereNull('expired_date')
+                    ->orWhere('expired_date', '>=', now()->toDateString());
+            })
+            ->where('id', '!=', $property->id)
+            ->where(function ($q) use ($property) {
+                if ($property->area) {
+                    $q->where('area', $property->area);
+                }
+                if ($property->property_type) {
+                    $q->orWhere('property_type', $property->property_type);
+                }
+            })
+            ->whereNotNull('title')
+            ->where('title', '!=', '')
+            ->inRandomOrder()
+            ->limit(4)
+            ->get();
+
+        return view('public.property.show', compact('property', 'allProperties', 'relatedProperties'));
     }
 
     public function successfulProperties(Request $request)
     {
         $query = Property::query();
+
+        // Property quality filter
+        $query->whereNotNull('title')
+            ->where('title', '!=', '')
+            ->whereNotNull('description')
+            ->where('description', '!=', '')
+            ->where(function ($q) {
+                $q->whereHas('media', function ($mq) {
+                    $mq->where('collection_name', 'photos');
+                });
+            });
 
         // Filter by property status - show SOLD or RENTED, or both if not specified
         if ($request->filled('property_status')) {

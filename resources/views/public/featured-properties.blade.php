@@ -1,6 +1,16 @@
 @extends('public.layouts.app')
 
-@section('title', 'Featured Properties - BALI Properties')
+@php
+    $hasFilters = request()->hasAny(['property_type', 'location', 'page', 'sort', 'keyword']);
+@endphp
+
+@section('title', 'Featured Properties - Premium Villas & Houses in Bali | Prospedity')
+
+@section('meta_description', 'Discover our exclusive collection of featured properties in Bali. Hand-picked luxury villas, apartments, and investment opportunities curated by Prospedity.')
+
+@php
+    $noindex = $hasFilters;
+@endphp
 
 @section('content')
 <!-- Hero Section - Only show if no filter is active (filter banner will show instead) -->
@@ -229,7 +239,7 @@
                                         $displayPhoto = $coverPhoto ?? $photos->first();
                                         $imageUrl = '/storage/' . $displayPhoto->id . '/' . $displayPhoto->file_name;
                                     @endphp
-                                    <img src="{{ $imageUrl }}" alt="{{ $property->title }}" class="w-full h-full object-cover carousel-image" data-index="0">
+                                    <img src="{{ $imageUrl }}" alt="{{ $property->title }}" class="w-full h-full object-cover carousel-image" data-index="0" loading="lazy">
                                     
                                     <!-- Navigation Arrows -->
                                     @if($photos->count() > 1)

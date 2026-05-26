@@ -1,6 +1,15 @@
 @extends('public.layouts.app')
 
-@section('title', $title ?? ($guide->title . ' - PROSPEDITY'))
+@php
+    use Illuminate\Support\Str;
+    $guideTitle = $title ?? ($guide->title . ' - Prospedity');
+    $guideDesc = $guide && $guide->content ? Str::limit(strip_tags($guide->content), 160) : 'Expert advisor guide from Prospedity about Bali real estate.';
+    $guideCanonical = $guide ? url('/advisor-guide/' . $guide->id) : url('/advisor-guide');
+@endphp
+
+@section('title', $guideTitle)
+
+@section('meta_description', $guideDesc)
 
 @section('content')
 @php

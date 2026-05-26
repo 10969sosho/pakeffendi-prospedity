@@ -1,6 +1,22 @@
 @extends('public.layouts.app')
 
-@section('title', 'Latest Villas, Apartments & Houses Listed - BALI Properties')
+@php
+    $hasFilters = request()->hasAny(['property_type', 'location', 'property_status', 'search_type', 'page', 'sort', 'keyword', 'min_price', 'max_price', 'bedroom', 'property_category', 'property_tag', 'land_size']);
+@endphp
+
+@section('title', $hasFilters && isset($filterInfo)
+    ? ($filterInfo['total_count'] ?? 0) . ' ' . ($filterInfo['property_type'] ? ucfirst($filterInfo['property_type']) . ' ' : '') . 'Properties for Sale in ' . ($filterInfo['location'] ?? 'Bali') . ' | Prospedity'
+    : 'Latest Villas, Apartments & Houses for Sale in Bali | Prospedity'
+)
+
+@section('meta_description', $hasFilters && isset($filterInfo)
+    ? 'Browse ' . ($filterInfo['total_count'] ?? 0) . ' premium properties for sale in ' . ($filterInfo['location'] ?? 'Bali') . '. Find luxury villas, apartments, and investment properties with Prospedity.'
+    : 'Discover the finest villas, apartments, and houses for sale in Bali. Curated luxury properties in Canggu, Seminyak, Ubud and more. Expert advisory from Prospedity.'
+)
+
+@php
+    $noindex = $hasFilters;
+@endphp
 
 @section('content')
 <!-- Hero Section - Only show if no filter is active (filter banner will show instead) -->
@@ -233,7 +249,7 @@
                                         $displayPhoto = $coverPhoto ?? $photos->first();
                                         $imageUrl = '/storage/' . $displayPhoto->id . '/' . $displayPhoto->file_name;
                                     @endphp
-                                    <img src="{{ $imageUrl }}" alt="{{ $property->title }}" class="w-full h-full object-cover carousel-image" data-index="0">
+                                    <img src="{{ $imageUrl }}" alt="{{ $property->title }}" class="w-full h-full object-cover carousel-image" data-index="0" loading="lazy">
                                     
                                     <!-- Navigation Arrows -->
                                     @if($photos->count() > 1)

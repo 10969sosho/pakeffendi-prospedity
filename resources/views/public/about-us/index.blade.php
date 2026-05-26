@@ -2,12 +2,17 @@
 
 @php
     $isAboutPage = request()->routeIs('about-us');
+    $aboutTitle = $isAboutPage 
+        ? (($aboutSetting && $aboutSetting->seo_title) ? $aboutSetting->seo_title : 'About Us - Prospedity Digital Properties Bali')
+        : 'Our Services - Prospedity Digital Properties Bali';
+    $aboutDesc = $isAboutPage
+        ? (($aboutSetting && $aboutSetting->seo_description) ? $aboutSetting->seo_description : 'Learn about Prospedity Digital Properties Bali. Your trusted partner for luxury villa and property investment in Bali.')
+        : 'Explore our comprehensive property services in Bali. From villa sales to investment advisory, Prospedity provides expert guidance for your property journey.';
 @endphp
 
-@section('title', $isAboutPage
-    ? (($aboutSetting && $aboutSetting->page_title) ? $aboutSetting->page_title : 'About Us - PROSPEDITY')
-    : 'Our Services - PROSPEDITY'
-)
+@section('title', $aboutTitle)
+
+@section('meta_description', $aboutDesc)
 
 @section('content')
 <!-- Hero Section -->

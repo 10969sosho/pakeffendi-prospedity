@@ -1,2 +1,23 @@
 User-agent: *
-Disallow:
+Allow: /
+
+Disallow: /*?page=
+Disallow: /*?sort=
+Disallow: /*?search=
+Disallow: /*?filter=
+Disallow: /*?keyword=
+Disallow: /*?min_price=
+Disallow: /*?max_price=
+Disallow: /*?property_type=
+Disallow: /*?location=
+Disallow: /*?bedroom=
+Disallow: /*?property_category=
+Disallow: /*?property_tag=
+Disallow: /*?land_size=
+Disallow: /*?pic_ref_number=
+Disallow: /*?property_number=
+Disallow: /*?currency=
+Disallow: /*?search_type=
+Disallow: /*?property_status=
+
+Sitemap: https://home.prospedity.com/sitemap.xml

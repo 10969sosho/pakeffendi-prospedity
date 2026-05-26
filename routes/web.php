@@ -26,7 +26,11 @@ use App\Http\Controllers\Public\ContactUsController;
 use App\Http\Controllers\Public\PropertyController as PublicPropertyController;
 use App\Http\Controllers\Public\SalesOrderController as PublicSalesOrderController;
 use App\Http\Controllers\Public\ServicePackageController as PublicServicePackageController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
+
+// Sitemap
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Language switcher
 Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');

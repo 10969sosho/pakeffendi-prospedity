@@ -1,6 +1,16 @@
 @extends('public.layouts.app')
 
-@section('title', 'Successful Properties - PROSPEDITY')
+@php
+    $hasFilters = request()->hasAny(['property_status', 'property_type', 'location', 'pic_ref_number']);
+@endphp
+
+@section('title', 'Successful Properties - Sold & Rented Properties in Bali | Prospedity')
+
+@section('meta_description', 'Browse our portfolio of successfully sold and rented properties in Bali. See real transaction results and market proof from Prospedity Digital Properties.')
+
+@php
+    $noindex = $hasFilters;
+@endphp
 
 @section('content')
 <!-- Hero Section -->
@@ -103,7 +113,7 @@
                                     $displayPhoto = $coverPhoto ?? $photos->first();
                                     $imageUrl = '/storage/' . $displayPhoto->id . '/' . $displayPhoto->file_name;
                                 @endphp
-                                <img src="{{ $imageUrl }}" alt="{{ $property->title }}" class="w-full h-full object-cover">
+                                <img src="{{ $imageUrl }}" alt="{{ $property->title }}" class="w-full h-full object-cover" loading="lazy">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-gray-400">
                                     <svg class="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -1,6 +1,63 @@
 @extends('public.layouts.app')
 
-@section('title', $property->title . ' - BALI Properties')
+@php
+    use Illuminate\Support\Str;
+    $bedroomText = $property->bedroom ? $property->bedroom . ' Bedroom ' : '';
+    $areaText = $property->area ? ' in ' . $property->area : ' in Bali';
+    $propertyTitle = $bedroomText . $property->title;
+    $metaDesc = $property->description
+        ? Str::limit(strip_tags($property->description), 160)
+        : ($bedroomText . 'property for sale' . $areaText . '. ' . ($property->land_size ? 'Land size: ' . $property->land_size . ' m².' : '') . ($property->building_size ? ' Building size: ' . $property->building_size . ' m².' : ''));
+    $canonical = url('/property/' . ($property->property_number ?? $property->slug));
+    $ogImage = $property->getMedia('photos')->first()
+        ? url('/storage/' . $property->getMedia('photos')->first()->id . '/' . $property->getMedia('photos')->first()->file_name)
+        : asset('images/og-default.jpg');
+@endphp
+
+@section('title', $propertyTitle . ' | Prospedity')
+
+@section('meta_description', $metaDesc)
+
+@section('head_extra')
+@php
+    $photos = $property->getMedia('photos');
+    $photoUrls = $photos->map(fn($p) => url('/storage/' . $p->id . '/' . $p->file_name))->toArray();
+    $mainPrice = null;
+    if ($property->price_freehold && $property->price_freehold > 0) $mainPrice = $property->price_freehold;
+    elseif ($property->price_leasehold && $property->price_leasehold > 0) $mainPrice = $property->price_leasehold;
+    elseif ($property->price_yearly && $property->price_yearly > 0) $mainPrice = $property->price_yearly;
+    elseif ($property->price_monthly && $property->price_monthly > 0) $mainPrice = $property->price_monthly;
+
+    $listingSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'RealEstateListing',
+        'name' => $property->title,
+        'description' => $metaDesc,
+        'url' => $canonical,
+        'image' => !empty($photoUrls) ? $photoUrls : [asset('images/og-default.jpg')],
+        'datePosted' => $property->created_at ? $property->created_at->toIso8601String() : date('c'),
+    ];
+    if ($mainPrice) {
+        $listingSchema['offers'] = [
+            '@type' => 'Offer',
+            'price' => $mainPrice,
+            'priceCurrency' => 'IDR',
+        ];
+    }
+
+    $breadcrumbSchema = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Properties', 'item' => url('/')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $property->title],
+        ],
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($listingSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+<script type="application/ld+json">{!! json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+@endsection
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 mt-0 sm:mt-8 property-detail-container">
@@ -30,7 +87,7 @@
                             $mainPhoto = $coverPhoto ?? $photos->first();
                             $mainImageUrl = '/storage/' . $mainPhoto->id . '/' . $mainPhoto->file_name;
                         @endphp
-                        <img src="{{ $mainImageUrl }}" alt="{{ $property->title }}" class="w-full object-cover" style="aspect-ratio: 4 / 3;" id="mainImage">
+                        <img src="{{ $mainImageUrl }}" alt="{{ $property->title }}" class="w-full object-cover" style="aspect-ratio: 4 / 3;" id="mainImage" loading="lazy">
                         @if($photos->count() > 1)
                             <div class="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 flex space-x-2 overflow-x-auto pb-2">
                                 @foreach($photos as $photo)
@@ -673,6 +730,45 @@
             <div id="all-properties-data" data-json='@json($allProperties)'></div>
         </div>
     </div>
+
+    <!-- Related Properties -->
+    @if(isset($relatedProperties) && $relatedProperties->count() > 0)
+    <section class="mt-12 sm:mt-16">
+        <div class="bg-white rounded-lg shadow-md p-4 sm:p-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Related Properties</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                @foreach($relatedProperties as $related)
+                @php
+                    $relPhotos = $related->getMedia('photos');
+                    $relCover = $related->coverPhoto() ?? $relPhotos->first();
+                    $relImageUrl = $relCover ? '/storage/' . $relCover->id . '/' . $relCover->file_name : null;
+                    $relPrice = $related->price_freehold ?: $related->price_leasehold ?: $related->price_yearly ?: $related->price_monthly;
+                @endphp
+                <a href="{{ route('property.show', $related->property_number ?? $related->slug) }}" class="group block">
+                    <div class="aspect-[4/3] bg-gray-200 rounded-lg overflow-hidden mb-3">
+                        @if($relImageUrl)
+                        <img src="{{ $relImageUrl }}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        @else
+                        <div class="w-full h-full flex items-center justify-center text-gray-400">
+                            <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        @endif
+                    </div>
+                    <h3 class="text-sm font-semibold text-gray-900 group-hover:text-[#96A480] transition-colors line-clamp-2">{{ $related->title }}</h3>
+                    @if($related->area)
+                    <p class="text-xs text-gray-600 mt-1">{{ $related->area }}</p>
+                    @endif
+                    @if($relPrice)
+                    <p class="text-sm font-bold text-[#96A480] mt-1">IDR {{ number_format($relPrice, 0, ',', '.') }}</p>
+                    @endif
+                </a>
+                @endforeach
+            </div>
+        </div>
+    </section>
+    @endif
 </div>
 
 <!-- Leaflet CSS -->

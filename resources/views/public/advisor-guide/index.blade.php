@@ -1,6 +1,8 @@
 @extends('public.layouts.app')
 
-@section('title', 'Advisor Guide - PROSPEDITY')
+@section('title', 'Advisor Guide - Bali Property Insights & Tips | Prospedity')
+
+@section('meta_description', 'Expert advisor guides for buying, selling, and investing in Bali real estate. Learn about property laws, market trends, and tips from Prospedity professionals.')
 
 @section('content')
 <!-- Hero Section -->

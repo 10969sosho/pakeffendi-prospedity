@@ -1,16 +1,58 @@
+@php
+    use App\Services\SEOHelper;
+    $seoHelper = app(SEOHelper::class);
+    $currentUrl = url()->current();
+    $canonical = $canonical ?? $seoHelper->cleanCanonical();
+    $shouldNoindex = $noindex ?? $seoHelper->shouldNoindex();
+    $metaRobots = $shouldNoindex ? 'noindex,follow' : 'index,follow';
+    $seoTitle = trim($__env->yieldContent('title')) ?: 'Bali Properties - Premium Villas & Investment Properties | Prospedity';
+    $seoDescription = trim($__env->yieldContent('meta_description')) ?: 'Curating exceptional villas and investment properties in Bali\'s most sought-after locations. Find your dream property with Prospedity Digital Properties.';
+    $seoImage = $ogImage ?? asset('images/og-default.jpg');
+    $siteName = 'Prospedity';
+@endphp
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'BALI Properties')</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>{{ $seoTitle }}</title>
+    <meta name="description" content="{{ $seoDescription }}">
+    <meta name="robots" content="{{ $metaRobots }}">
+
+    <link rel="canonical" href="{{ $canonical }}">
+
+    <meta property="og:title" content="{{ $seoTitle }}">
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:url" content="{{ $canonical }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ $siteName }}">
+    <meta property="og:image" content="{{ $seoImage }}">
+    <meta property="og:locale" content="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $seoTitle }}">
+    <meta name="twitter:description" content="{{ $seoDescription }}">
+    <meta name="twitter:image" content="{{ $seoImage }}">
+
+    <script type="application/ld+json">
+        {!! json_encode($seoHelper->organizationSchema(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
+    <script type="application/ld+json">
+        {!! json_encode($seoHelper->webSiteSchema(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
+
+    @if($homeSetting && $homeSetting->facebook_url)
+    <meta property="fb:pages" content="{{ $homeSetting->facebook_url }}">
+    @endif
+
+    @yield('head_extra')
+
     <script src="https://cdn.tailwindcss.com"></script>
     @php
-        // Ensure proper URL generation for assets
         $cssPath = asset('css/app.css');
         $jsPath = asset('js/app.js');
-        
-        // Add cache busting if file exists
         $cssVersion = file_exists(public_path('css/app.css')) ? filemtime(public_path('css/app.css')) : time();
         $jsVersion = file_exists(public_path('js/app.js')) ? filemtime(public_path('js/app.js')) : time();
     @endphp
@@ -355,7 +397,7 @@
                         <!-- Logo Icon - Geometric Diamond Shapes -->
                         <div class="flex justify-center items-center mb-2 space-x-1">
                             @if($homeSetting && $homeSetting->hero_logo)
-                                <img src="{{ asset('storage/' . $homeSetting->hero_logo) }}" alt="Logo" class="h-32 object-contain">
+                                <img src="{{ asset('storage/' . $homeSetting->hero_logo) }}" alt="Logo" class="h-32 object-contain" loading="lazy">
                             @else
                                 <svg class="w-8 h-8 text-white transform rotate-45" fill="currentColor" viewBox="0 0 24 24">
                                     <rect x="8" y="8" width="8" height="8"/>

@@ -1,6 +1,8 @@
 @extends('public.layouts.app')
 
-@section('title', 'Contact Us - PROSPEDITY')
+@section('title', 'Contact Us - Prospedity Digital Properties Bali')
+
+@section('meta_description', 'Get in touch with Prospedity for inquiries about luxury properties in Bali. Contact our expert advisors for villas, investments, and property consultation.')
 
 @section('content')
 <!-- Hero Section -->

@@ -16,5 +16,8 @@ class ContactSetting extends Model
         'tiktok_url',
         'address',
         'maps_url',
+        'seo_title',
+        'seo_description',
+        'seo_keywords',
     ];
 }

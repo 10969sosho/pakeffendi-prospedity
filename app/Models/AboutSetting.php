@@ -11,5 +11,8 @@ class AboutSetting extends Model
         'hero_title',
         'page_title',
         'page_description',
+        'seo_title',
+        'seo_description',
+        'seo_keywords',
     ];
 }

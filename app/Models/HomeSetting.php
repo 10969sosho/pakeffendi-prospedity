@@ -18,6 +18,9 @@ class HomeSetting extends Model
         'email',
         'contact_title',
         'contact_description',
+        'seo_title',
+        'seo_description',
+        'seo_keywords',
     ];
 }
 
