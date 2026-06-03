@@ -1,16 +1,8 @@
 @extends('public.layouts.app')
 
-@php
-    $hasFilters = request()->hasAny(['property_status', 'property_type', 'location', 'pic_ref_number']);
-@endphp
-
 @section('title', 'Successful Properties - Sold & Rented Properties in Bali | Prospedity')
 
 @section('meta_description', 'Browse our portfolio of successfully sold and rented properties in Bali. See real transaction results and market proof from Prospedity Digital Properties.')
-
-@php
-    $noindex = $hasFilters;
-@endphp
 
 @section('content')
 <!-- Hero Section -->

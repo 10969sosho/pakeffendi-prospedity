@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Public\LandingPageController;
 use App\Models\AdvisorGuide;
 use App\Models\Property;
 
@@ -29,7 +30,9 @@ class SitemapController extends Controller
 
         $advisorGuides = AdvisorGuide::orderBy('updated_at', 'desc')->get();
 
-        $content = view('sitemap', compact('properties', 'advisorGuides'))->render();
+        $landingPages = LandingPageController::getSitemapUrls();
+
+        $content = view('sitemap', compact('properties', 'advisorGuides', 'landingPages'))->render();
 
         return response($content, 200, [
             'Content-Type' => 'application/xml; charset=utf-8',

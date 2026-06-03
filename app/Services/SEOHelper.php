@@ -52,12 +52,33 @@ class SEOHelper
 
     public function cleanCanonical(): string
     {
-        return $this->siteUrl . '/' . ltrim($this->request->path(), '/');
+        $base = $this->siteUrl . '/' . ltrim($this->request->path(), '/');
+
+        // Self-referencing canonical for pages with query parameters.
+        // Prevents "Duplicate without user-selected canonical" in GSC
+        // when multiple filtered/paginated URLs all point to the same base path.
+        $queryString = $this->request->getQueryString();
+        if ($queryString) {
+            return $base . '?' . $queryString;
+        }
+
+        return $base;
     }
 
     public function shouldNoindex(): bool
     {
-        if ($this->request->hasAny(['page', 'sort', 'search', 'filter'])) {
+        // Any page with query parameters (filter, pagination, sort, search) should be noindex
+        // to prevent thin/duplicate content from being indexed by Google.
+        $noindexParams = [
+            'page', 'sort', 'search', 'filter',
+            'keyword', 'search_type',
+            'property_type', 'property_category', 'property_status', 'property_tag',
+            'location', 'bedroom',
+            'min_price', 'max_price', 'price_range',
+            'land_size', 'pic_ref_number', 'property_number', 'currency',
+        ];
+
+        if ($this->request->hasAny($noindexParams)) {
             return true;
         }
         return false;

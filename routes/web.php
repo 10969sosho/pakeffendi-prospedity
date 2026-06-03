@@ -23,6 +23,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\Public\AboutUsController;
 use App\Http\Controllers\Public\BaliGuideController;
 use App\Http\Controllers\Public\ContactUsController;
+use App\Http\Controllers\Public\LandingPageController;
 use App\Http\Controllers\Public\PropertyController as PublicPropertyController;
 use App\Http\Controllers\Public\SalesOrderController as PublicSalesOrderController;
 use App\Http\Controllers\Public\ServicePackageController as PublicServicePackageController;
@@ -61,6 +62,26 @@ Route::get('/advisor-guide/{advisorGuide}', [BaliGuideController::class, 'show']
 // Contact Us routes
 Route::get('/contact-us', [ContactUsController::class, 'index'])->name('contact-us');
 Route::post('/contact-us', [ContactUsController::class, 'store'])->name('contact-us.store');
+
+// SEO Landing Pages
+Route::get('/villas-for-sale-in-bali', [LandingPageController::class, 'show'])
+    ->defaults('routeName', 'landing.villas-sale')
+    ->name('landing.villas-sale');
+Route::get('/villas-for-rent-in-bali', [LandingPageController::class, 'show'])
+    ->defaults('routeName', 'landing.villas-rent')
+    ->name('landing.villas-rent');
+Route::get('/land-for-sale-in-bali', [LandingPageController::class, 'show'])
+    ->defaults('routeName', 'landing.land-sale')
+    ->name('landing.land-sale');
+Route::get('/property-in-canggu', [LandingPageController::class, 'show'])
+    ->defaults('routeName', 'landing.property-canggu')
+    ->name('landing.property-canggu');
+Route::get('/property-in-seminyak', [LandingPageController::class, 'show'])
+    ->defaults('routeName', 'landing.property-seminyak')
+    ->name('landing.property-seminyak');
+Route::get('/property-in-ubud', [LandingPageController::class, 'show'])
+    ->defaults('routeName', 'landing.property-ubud')
+    ->name('landing.property-ubud');
 
 // Admin routes
 Route::prefix('admin')->name('admin.')->group(function () {

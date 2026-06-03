@@ -1,16 +1,8 @@
 @extends('public.layouts.app')
 
-@php
-    $hasFilters = request()->hasAny(['property_type', 'location', 'page', 'sort', 'keyword']);
-@endphp
-
 @section('title', 'Featured Properties - Premium Villas & Houses in Bali | Prospedity')
 
 @section('meta_description', 'Discover our exclusive collection of featured properties in Bali. Hand-picked luxury villas, apartments, and investment opportunities curated by Prospedity.')
-
-@php
-    $noindex = $hasFilters;
-@endphp
 
 @section('content')
 <!-- Hero Section - Only show if no filter is active (filter banner will show instead) -->

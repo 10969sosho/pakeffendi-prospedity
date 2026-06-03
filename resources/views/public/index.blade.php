@@ -14,10 +14,6 @@
     : 'Discover the finest villas, apartments, and houses for sale in Bali. Curated luxury properties in Canggu, Seminyak, Ubud and more. Expert advisory from Prospedity.'
 )
 
-@php
-    $noindex = $hasFilters;
-@endphp
-
 @section('content')
 <!-- Hero Section - Only show if no filter is active (filter banner will show instead) -->
 @if(!isset($filterInfo) || (!request()->has('property_type') && !request()->has('location') && !request()->has('property_status') && !request()->has('search_type')))
@@ -54,7 +50,7 @@
             </div>
         </div>
         
-        <form action="{{ route('home') }}" method="GET" class="bg-white border border-gray-200 border-t-0 rounded-b-lg p-6">
+        <form id="searchForm" action="{{ route('home') }}" method="GET" class="bg-white border border-gray-200 border-t-0 rounded-b-lg p-6">
             <!-- Tabs (Removed) -->
             {{-- 
             <div class="flex border-b border-gray-200 mb-6">
@@ -660,6 +656,24 @@
                 }
             });
         });
+
+        // SEO: Intercept form submission to prevent Google from crawling filter URLs.
+        // Uses fetch API instead of native GET form submission.
+        const searchForm = document.getElementById('searchForm');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(searchForm);
+                const params = new URLSearchParams();
+                for (const [key, value] of formData.entries()) {
+                    if (value && value.trim() !== '') {
+                        params.append(key, value);
+                    }
+                }
+                // Navigate client-side — Googlebot won't follow these URLs from internal links.
+                window.location.href = searchForm.action + '?' + params.toString();
+            });
+        }
     });
 </script>
 @endsection
