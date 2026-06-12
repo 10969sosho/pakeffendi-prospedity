@@ -63,6 +63,17 @@
                             <input type="file" id="hero_background" name="hero_background" accept="image/*" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 focus:outline-none focus:border-[#96A480]">
                             <p class="mt-1 text-xs text-gray-500">Optimal: 1920×1080 (16:9) atau 2560×1080 (21:9). Max 4MB.</p>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Banner Active Status</label>
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="is_banner_active" value="1" class="sr-only peer" {{ optional($setting)->is_banner_active ? 'checked' : '' }}>
+                                <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#96A480] rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#96A480]"></div>
+                                <span class="ms-3 text-sm font-medium text-gray-700">
+                                    {{ optional($setting)->is_banner_active ? 'Active' : 'Non Active' }}
+                                </span>
+                            </label>
+                            <p class="mt-1 text-xs text-gray-500">Jika non-active, gambar banner tidak akan ditampilkan di halaman publik.</p>
+                        </div>
                     </div>
                 </div>
 

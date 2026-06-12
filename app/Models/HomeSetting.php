@@ -10,6 +10,7 @@ class HomeSetting extends Model
         'hero_title',
         'hero_subtitle',
         'hero_background',
+        'is_banner_active',
         'hero_logo',
         'facebook_url',
         'instagram_url',

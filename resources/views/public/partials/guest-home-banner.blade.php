@@ -1,5 +1,6 @@
 @php
-    $hasBannerImage = isset($homeSetting) && $homeSetting && $homeSetting->hero_background;
+    $bannerActive = isset($homeSetting) && $homeSetting && $homeSetting->is_banner_active;
+    $hasBannerImage = $bannerActive && $homeSetting->hero_background;
     $bannerImage = $hasBannerImage ? asset('storage/' . $homeSetting->hero_background) : null;
 
     $defaultHeroTitle = 'LATEST VILLAS, APARTMENTS & HOUSES LISTED';

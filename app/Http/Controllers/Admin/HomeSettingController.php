@@ -44,6 +44,7 @@ class HomeSettingController extends Controller
 
         $setting->hero_title = $data['hero_title'] ?? null;
         $setting->hero_subtitle = $data['hero_subtitle'] ?? null;
+        $setting->is_banner_active = $request->has('is_banner_active');
         $setting->navbar_title = $data['navbar_title'] ?? null;
         $setting->navbar_description = $data['navbar_description'] ?? null;
         $setting->facebook_url = $data['facebook_url'] ?? null;
