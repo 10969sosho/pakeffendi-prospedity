@@ -7,6 +7,7 @@
     $defaultHeroSubtitle = '<strong>Prospedity Digital Properties</strong> is your trusted partner for property investment in Bali. With years of experience in the real estate market, we offer a comprehensive selection of premium properties including villas, apartments, and houses. Our team of experts is dedicated to helping you find the perfect property that meets your needs and investment goals. Whether you\'re looking for a vacation home, rental property, or long-term investment, we have the expertise and portfolio to guide you through every step of your property journey in Bali.';
 @endphp
 
+@if($bannerActive)
 <section id="home-guest-banner" class="bg-white pt-16 md:pt-24">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
         <div class="relative group w-full max-w-5xl mx-auto rounded-3xl border border-dashed border-gray-500/60 overflow-hidden bg-black/40">
@@ -18,6 +19,7 @@
         </div>
     </div>
 </section>
+@endif
 
 <section id="home-guest-intro" class="bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
