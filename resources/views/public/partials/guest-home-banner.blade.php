@@ -22,7 +22,7 @@
 @endif
 
 <section id="home-guest-intro" class="bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 {{ !$bannerActive ? 'pt-24 md:pt-32' : '' }}">
         <div class="max-w-4xl mx-auto text-center">
             <p class="text-[#96A480] text-xs sm:text-sm tracking-[0.25em] uppercase font-semibold">Prospedity Digital Properties</p>
             <h1 class="mt-4 text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-gray-900">
